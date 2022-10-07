@@ -14,10 +14,11 @@ const logger = (req, res, next) => {
 
 //app.use(logger);
 
-app.get("/getAll", (req, res) => res.send(names));
+app.get("/getAll", (req, res,) => res.send(names));
 
-app.post("/addName", logger, (req, res) => {
+app.post("/addName", logger, (req, res, next) => {
     const name = req.body.name;
+    if (!req.body.name) return next({status: 400, message: "New name not provided"});
     names.push(req.body.name);
     res.status(201).send(`${name} successfully added`);
 });
@@ -32,6 +33,16 @@ app.put("/replace/:index", (req, res) => {
     const newName = req.query.name;
     names[index] = newName;
     res.send(`${oldName} has been replaced with ${newName}`)
+})
+
+app.use((err, req, res, next) => {
+    console.log(err.stack);
+    next(err);
+});
+
+app.use((err, req, res, next) => {
+    console.log(err);
+    res.status(err.status || 500 ).send(err.message || "Error Occurred");
 })
 
 const server = app.listen(1904, () => {
