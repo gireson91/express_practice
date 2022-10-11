@@ -17,20 +17,24 @@ newDoc.save().then(() => console.log("Done!"));
 
 
 router.post("/addTeamMember", (req, res, next) => {
-    teamModel.create(req.body).then(result => res.status(201).send(result)).catch(e => next(e));
+    teamModel.create(req.body)
+    .then(result => res.status(201).send(result))
+    .catch(e => next(e));
 });
 
-router.delete("/delete/:id", (req, res) => {
-    res.send(names.splice(req.params.id, 1));
+router.delete("/delete/:id", (req, res, next) => {
+    teamModel.findByIdAndDelete(req.params.id)
+    .then(results => res.send(results))
+    .catch(err => next(err))
 });
 
-router.put("/replace/:index", (req, res) => {
-    const index = req.params.index;
-    const oldName = names[index];
-    const newName = req.query.name;
-    names[index] = newName;
-    res.send(`${oldName} has been replaced with ${newName}`)
-})
+router.put("/replace/:id", (req, res, next) => {
+    const {id} = req.params;
+    const newData = req.body;
+    teamModel.findByIdAndUpdate(id, newData, next)
+    .then(console.log(req.body))
+    .catch(err => next(err))
+});
 
 router.use((err, req, res, next) => {
     console.log(err.stack);

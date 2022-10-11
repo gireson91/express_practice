@@ -15,7 +15,7 @@ const teamSchema = new mongoose.Schema({
     },
     height: String,
     eyeColour: String,
-    lives: [{
+    livesIn: [{
         town: String,
         county: String
     }],
